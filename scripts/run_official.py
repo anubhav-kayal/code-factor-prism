@@ -44,6 +44,7 @@ def main() -> None:
     ap.add_argument("--config", default=None, help="dev config JSON -> run as MTEB SearchProtocol")
     ap.add_argument("--max-seq-length", type=int, default=None)
     ap.add_argument("--threads", type=int, default=None)
+    ap.add_argument("--device", default="cpu", help="cpu (submission) | mps | cuda (experiments only)")
     ap.add_argument("--batch-size", type=int, default=64)
     ap.add_argument("--out", default="results")
     ap.add_argument("--smoke", action="store_true", help="evaluate on a small subsample")
@@ -51,6 +52,8 @@ def main() -> None:
 
     cfg = json.loads(Path(args.config).read_text()) if args.config else None
     run_name = cfg["run_id"].removeprefix("dev-") if cfg else args.model
+    if not cfg and args.max_seq_length:
+        run_name += f"-len{args.max_seq_length}"
     out = Path(args.out) / (run_name + ("-smoke" if args.smoke else ""))
     out.mkdir(parents=True, exist_ok=True)
 
@@ -61,7 +64,8 @@ def main() -> None:
         model = PrismHybridSearch(cfg, name=f"prism/{run_name}")
     else:
         model = PrePostPipelineEncoder(
-            PipelineConfig(model_key=args.model, max_seq_length=args.max_seq_length, num_threads=args.threads)
+            PipelineConfig(model_key=args.model, max_seq_length=args.max_seq_length,
+                           num_threads=args.threads, device=args.device)
         )
     load_s = time.perf_counter() - t0
 
@@ -69,10 +73,12 @@ def main() -> None:
     if args.smoke:
         task.load_data()
         split = task.dataset["default"]["test"]
-        qids = list(split["relevant_docs"])[:50]
+        # sorted so the smoke subset is identical across runs (dict order is not)
+        qids = sorted(split["relevant_docs"], key=lambda q: int(q.lstrip("q")))[:50]
         keep_docs = {d for q in qids for d in split["relevant_docs"][q]}
         corpus = split["corpus"]
-        extra = [i for i in corpus["id"][:500] if i not in keep_docs][: 200 - len(keep_docs)]
+        extra = [i for i in sorted(corpus["id"], key=lambda d: int(d.lstrip("d")))
+                 if i not in keep_docs][: 200 - len(keep_docs)]
         keep_docs |= set(extra)
         split["corpus"] = corpus.filter(lambda r: r["id"] in keep_docs)
         split["queries"] = split["queries"].filter(lambda r: r["id"] in set(qids))
@@ -101,7 +107,7 @@ def main() -> None:
         "model_revision": None if cfg else model.spec.revision,
         "max_seq_length": None if cfg else model.model.max_seq_length,
         "smoke": args.smoke,
-        "device": "cpu",
+        "device": "cpu" if cfg else args.device,
         "torch_threads": torch.get_num_threads(),
         "machine": f"{platform.machine()} {platform.processor()} {platform.platform()}",
         "model_load_s": round(load_s, 2),

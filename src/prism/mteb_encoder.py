@@ -63,6 +63,7 @@ class PipelineConfig:
     model_key: str = "jina-code-0.5b"
     max_seq_length: int | None = None  # None -> spec default
     num_threads: int | None = None
+    device: str = "cpu"  # "cpu" is the submission setting; "mps"/"cuda" only for offline experiments
     query_pre: Callable[[list[str]], list[str]] = identity
     doc_pre: Callable[[list[str]], list[str]] = identity
     tag: str = "stage0"
@@ -76,7 +77,7 @@ class PrePostPipelineEncoder(AbsEncoder):
         self.spec = spec
         if self.config.num_threads:
             torch.set_num_threads(self.config.num_threads)
-        self.model = SentenceTransformer(spec.name, revision=spec.revision, device="cpu")
+        self.model = SentenceTransformer(spec.name, revision=spec.revision, device=self.config.device)
         self.model.max_seq_length = self.config.max_seq_length or spec.max_seq_length
         self.mteb_model_meta = ModelMeta.create_empty(
             overwrites={
