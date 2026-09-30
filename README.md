@@ -1,0 +1,59 @@
+# PRISM Theme 1 — CPU-first code retrieval
+
+Given a natural-language query and a collection of code snippets, return the
+snippets ranked by relevance. Retrieval only: no generation or explanation.
+
+Primary target: CoIR **AppsRetrieval** test split (NDCG@10, MRR@10), scored
+through the official `mteb.evaluate` path on CPU.
+
+## Setup
+
+```bash
+python3.12 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+Dataset, model and library revisions are pinned in `requirements.txt` and
+`configs/pins.yaml`. The dataset revision equals the one pinned by
+`mteb==2.21.10`'s `AppsRetrieval` task.
+
+## Official run (produces the submission JSON)
+
+```bash
+.venv/bin/python scripts/run_official.py --model e5-base-v2
+# -> results/e5-base-v2/appsretrieval_results.json   (upload this to the GitHub Release)
+#    results/e5-base-v2/run_profile.json             (wall time, peak RSS, threads, versions)
+#    results/e5-base-v2/AppsRetrieval_predictions.json (raw ranked lists)
+```
+
+`--smoke` runs the same pipeline on a 50-query / 200-doc subset as a sanity check.
+The encoder is `src/prism/mteb_encoder.py::PrePostPipelineEncoder`, an MTEB
+`AbsEncoder` exactly as in the organisers' recipe.
+
+## Development (train queries only)
+
+```bash
+.venv/bin/python scripts/run_dev.py configs/dev/bm25.json
+.venv/bin/python -m pytest -q tests
+```
+
+Dev runs use the 5,000 **train** queries against the full 8,765-doc corpus and
+write `reports/<run_id>/{aggregate.json, per_query.jsonl}`. Test labels are only
+read by the frozen final run. `tests/test_metrics_match_mteb.py` checks that the
+dev metrics reproduce MTEB's numbers from the same ranked lists.
+
+## Layout
+
+| Path | Role |
+|---|---|
+| `src/prism/mteb_encoder.py` | Official-path encoder (pre/post-processing hooks) |
+| `src/prism/data.py` | Pinned loader, deterministic dev folds |
+| `src/prism/metrics.py` | NDCG@10 (pytrec_eval), MRR@k, Recall@k, gold ranks |
+| `src/prism/retrievers.py` | BM25 (identifier-aware tokens), dense exact search |
+| `src/prism/fusion.py` | RRF, weighted z-score |
+| `src/prism/cache.py` | Content-addressed embedding cache (also the repo-track content key) |
+| `src/prism/evaluate.py` | `evaluate(config)` → aggregate + per-query error report |
+
+## Results
+
+Only measured numbers appear here. See `reports/` and `results/`.
