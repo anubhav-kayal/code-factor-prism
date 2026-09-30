@@ -94,6 +94,20 @@ def extract_js(path: str, source: str) -> list[Snippet]:
                 stmt = node.parent if node.parent is not None and node.parent.type == "expression_statement" else node
                 emit(f"{scope}{_text(src, left)}", stmt)
                 return
+        if t == "call_expression" and node.parent is not None and node.parent.type == "expression_statement":
+            # top-level definitions via helpers, e.g. `defineGetter(req, 'protocol', function protocol(){...})`
+            args = node.child_by_field_name("arguments")
+            params = [a for a in (args.named_children if args else []) if a.type != "comment"]
+            fns = [a for a in params if a.type in _FUNC_VALUES]
+            if fns:
+                name = None
+                if len(params) >= 3 and params[1].type == "string" and params[0].type in ("identifier", "member_expression"):
+                    name = f"{_text(src, params[0])}.{_text(src, params[1]).strip(chr(39) + chr(34))}"
+                elif fns[0].child_by_field_name("name") is not None:
+                    name = _text(src, fns[0].child_by_field_name("name"))
+                if name:
+                    emit(f"{scope}{name}", node.parent)
+                    return
         if t == "pair":
             # object literal method: `{ handle: function (req, res) {...} }`
             key, value = node.child_by_field_name("key"), node.child_by_field_name("value")

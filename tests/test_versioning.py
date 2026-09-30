@@ -157,9 +157,11 @@ exports.etag = createETagGenerator({ weak: false });
 exports.compile = (x) => x + 1;
 module.exports = function createApplication() { return app; };
 var handlers = { handle: function (req) { return req; } };
+defineGetter(req, 'protocol', function protocol(){ return this.socket.encrypted ? 'https' : 'http'; });
+defineGetter(req, 'fresh', function(){ return fresh(this.headers); });
 """
     names = [s.symbol for s in extract_js("lib/response.js", src)]
-    assert names == ["res.send", "exports.compile", "module.exports", "handle"]
+    assert names == ["res.send", "exports.compile", "module.exports", "handle", "req.protocol", "req.fresh"]
 
 
 def test_extract_symbols():
