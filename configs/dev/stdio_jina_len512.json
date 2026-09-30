@@ -1,0 +1,15 @@
+{
+ "run_id": "dev-stdio-jina-len512",
+ "split": "train",
+ "query_filter": "stdio",
+ "depth": 200,
+ "retrievers": [
+  {
+   "type": "dense",
+   "model": "jina-code-0.5b",
+   "max_seq_length": 512,
+   "batch_size": 16
+  }
+ ],
+ "fusion": null
+}
