@@ -1,0 +1,106 @@
+{
+ "repo": "express",
+ "include": [
+  "lib/"
+ ],
+ "indexed_last_first_parent_commits": 130,
+ "note": "Author-labelled from the lib/ diffs of each commit. 'commit' is a commit where the target version of 'symbol' is present; the gold item is that symbol's content at that commit.",
+ "queries": [
+  {
+   "id": "res-send-a",
+   "query": "send a string body: if Content-Type is missing set type html, then reflect utf-8 charset in the content-type",
+   "symbol": "res.send",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "res-send-b",
+   "query": "send a string body: when Content-Type is a string set its charset to utf-8, otherwise set html with utf-8",
+   "symbol": "res.send",
+   "commit": "a479419b"
+  },
+  {
+   "id": "res-send-c",
+   "query": "send response: when a Transfer-Encoding header is present skip both Content-Length and ETag generation",
+   "symbol": "res.send",
+   "commit": "18e5985b"
+  },
+  {
+   "id": "res-send-d",
+   "query": "send response: always generate ETag, but only set Content-Length if there is no Transfer-Encoding header",
+   "symbol": "res.send",
+   "commit": "9a34acf0"
+  },
+  {
+   "id": "req-protocol-old",
+   "query": "determine request protocol from this.connection.encrypted",
+   "symbol": "req.protocol",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "req-protocol-new",
+   "query": "determine request protocol from this.socket.encrypted",
+   "symbol": "req.protocol",
+   "commit": "89f198c6"
+  },
+  {
+   "id": "app-listen-old",
+   "query": "start the http server, converting arguments with Array.prototype.slice.call",
+   "symbol": "app.listen",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "app-listen-new",
+   "query": "start the http server, converting arguments with a cached slice.call",
+   "symbol": "app.listen",
+   "commit": "54af593b"
+  },
+  {
+   "id": "req-fresh-old",
+   "query": "request freshness check: weak validation only for GET or HEAD requests",
+   "symbol": "req.fresh",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "req-fresh-new",
+   "query": "request freshness check: weak validation for GET, HEAD or QUERY requests",
+   "symbol": "req.fresh",
+   "commit": "ae6dd376"
+  },
+  {
+   "id": "req-host-old",
+   "query": "host from X-Forwarded-Host, take the first value and trimRight it",
+   "symbol": "req.host",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "req-host-new",
+   "query": "host from X-Forwarded-Host, take the first value and trimEnd it",
+   "symbol": "req.host",
+   "commit": "9d8223d9"
+  },
+  {
+   "id": "qs-patched",
+   "query": "parse extended query string with qs using plainObjects",
+   "symbol": "parseExtendedQueryString",
+   "commit": "2f64f68c"
+  },
+  {
+   "id": "qs-default",
+   "query": "parse extended query string with qs allowing prototypes",
+   "symbol": "parseExtendedQueryString",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "render-old",
+   "query": "render a view passing the options object through unchanged",
+   "symbol": "app.render",
+   "commit": "3dc96995"
+  },
+  {
+   "id": "render-new",
+   "query": "render a view, defaulting options to an empty object when null or undefined",
+   "symbol": "app.render",
+   "commit": "c9ecf7b6"
+  }
+ ]
+}
