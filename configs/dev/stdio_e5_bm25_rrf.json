@@ -1,0 +1,19 @@
+{
+ "run_id": "dev-stdio-e5-bm25-rrf",
+ "split": "train",
+ "retrievers": [
+  {
+   "type": "dense",
+   "model": "e5-base-v2"
+  },
+  {
+   "type": "bm25"
+  }
+ ],
+ "fusion": {
+  "method": "rrf",
+  "k": 60
+ },
+ "depth": 200,
+ "query_filter": "stdio"
+}

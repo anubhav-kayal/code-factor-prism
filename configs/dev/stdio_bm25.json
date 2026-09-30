@@ -1,0 +1,12 @@
+{
+ "run_id": "dev-stdio-bm25",
+ "split": "train",
+ "retrievers": [
+  {
+   "type": "bm25"
+  }
+ ],
+ "fusion": null,
+ "depth": 200,
+ "query_filter": "stdio"
+}

@@ -1,0 +1,13 @@
+{
+ "run_id": "dev-stdio-bm25-core",
+ "split": "train",
+ "retrievers": [
+  {
+   "type": "bm25",
+   "query_view": "core"
+  }
+ ],
+ "fusion": null,
+ "depth": 200,
+ "query_filter": "stdio"
+}
