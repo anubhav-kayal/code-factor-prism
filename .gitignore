@@ -6,3 +6,4 @@ results/
 reports/*/
 *.npy
 .DS_Store
+data/
