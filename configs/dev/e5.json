@@ -1,0 +1,1 @@
+{"run_id": "dev-e5", "split": "train", "retrievers": [{"type": "dense", "model": "e5-base-v2"}], "fusion": null, "depth": 200}

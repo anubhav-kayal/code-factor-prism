@@ -1,0 +1,1 @@
+{"run_id": "dev-bm25", "split": "train", "retrievers": [{"type": "bm25"}], "fusion": null, "depth": 200}
