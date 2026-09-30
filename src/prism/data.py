@@ -8,6 +8,7 @@ split is scored against). Test qrels are only read by the frozen final run.
 from __future__ import annotations
 
 import hashlib
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -54,6 +55,17 @@ def load_split(split: str = "train") -> Split:
 
 def _numeric_key(s: str):
     return (0, int(s)) if s.isdigit() else (1, s)
+
+
+_INPUT_SECTION = re.compile(r"(?im)^\s*-*\s*input\s*-*\s*:?\s*$")
+
+
+def is_stdio_style(query: str) -> bool:
+    """Contest-style statement (Input section, no starter code) — what the test split looks like.
+
+    Measured on query text only: 97% of test queries vs 24% of train queries match.
+    """
+    return bool(_INPUT_SECTION.search(query)) and "```python" not in query
 
 
 def dev_folds(query_ids: list[str], n_folds: int = 5) -> list[list[str]]:

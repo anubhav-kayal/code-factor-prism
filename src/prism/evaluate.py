@@ -4,6 +4,7 @@ Config (dict):
     run_id:      name for reports/<run_id>/
     split:       "train" (dev, default) or "test" (final frozen run only)
     folds:       optional list of fold indices to restrict dev queries
+    query_filter: optional "stdio" -> only test-like (contest-style) train queries
     retrievers:  [{"type": "bm25", ...}, {"type": "dense", "model": "e5-base-v2", ...}]
                  each may set "query_view" (see query_views.VIEWS, default "raw")
     fusion:      null | {"method": "rrf", "k": 60, "weights": [...]} | {"method": "zscore", ...}
@@ -70,6 +71,9 @@ def evaluate(config: dict) -> dict:
         folds = data.dev_folds(split.query_ids)
         keep = {q for f in config["folds"] for q in folds[f]}
         pairs = [(q, t) for q, t in zip(qids, qtexts) if q in keep]
+        qids, qtexts = [p[0] for p in pairs], [p[1] for p in pairs]
+    if config.get("query_filter") == "stdio":
+        pairs = [(q, t) for q, t in zip(qids, qtexts) if data.is_stdio_style(t)]
         qids, qtexts = [p[0] for p in pairs], [p[1] for p in pairs]
     qrels = {q: split.qrels[q] for q in qids}
     depth = config.get("depth", 200)
