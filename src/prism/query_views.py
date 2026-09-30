@@ -53,9 +53,34 @@ def core_view(text: str) -> str:
     return f"{core}\n\n{starter}".strip() if starter else core
 
 
+def core2_view(text: str) -> str:
+    """Like core_view, but keeps numeric lines outside dropped sections.
+
+    core_view dropped every number-only line, which removed constants stated in
+    the narrative (e.g. calorie values that the solution hard-codes, q1203).
+    Example/sample sections are still dropped as whole sections.
+    """
+    code_blocks = _CODE_FENCE.findall(text)
+    body = _CODE_FENCE.sub("\n", text)
+    out: list[str] = []
+    dropping = False
+    for line in body.split("\n"):
+        sec = _section_name(line)
+        if sec is not None:
+            dropping = sec in DROP_SECTIONS
+            if not dropping:
+                out.append(line)
+            continue
+        if not dropping:
+            out.append(line)
+    core = re.sub(r"\n{3,}", "\n\n", "\n".join(out)).strip()
+    starter = "\n".join(b.strip() for b in code_blocks if b.strip())
+    return f"{core}\n\n{starter}".strip() if starter else core
+
+
 def starter_code(text: str) -> str:
     """Only the fenced code blocks (e.g. `def solve(...)` / `class Solution`)."""
     return "\n".join(b.strip() for b in _CODE_FENCE.findall(text) if b.strip())
 
 
-VIEWS = {"raw": lambda t: t, "core": core_view}
+VIEWS = {"raw": lambda t: t, "core": core_view, "core2": core2_view}
