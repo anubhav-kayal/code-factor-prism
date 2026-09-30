@@ -87,6 +87,19 @@ def extract_js(path: str, source: str) -> list[Snippet]:
             if value is not None and value.type == "class":
                 visit(value, scope)
                 return
+        if t == "assignment_expression":
+            # `res.send = function send(body) {...}`, `exports.x = () => ...`
+            left, right = node.child_by_field_name("left"), node.child_by_field_name("right")
+            if right is not None and right.type in _FUNC_VALUES and left is not None:
+                stmt = node.parent if node.parent is not None and node.parent.type == "expression_statement" else node
+                emit(f"{scope}{_text(src, left)}", stmt)
+                return
+        if t == "pair":
+            # object literal method: `{ handle: function (req, res) {...} }`
+            key, value = node.child_by_field_name("key"), node.child_by_field_name("value")
+            if value is not None and value.type in _FUNC_VALUES and key is not None:
+                emit(f"{scope}{_text(src, key)}", node)
+                return
         for ch in node.children:
             visit(ch, scope)
 

@@ -150,6 +150,18 @@ def test_history_distinguishes_versions(repo, tmp_path):
     assert all(h["diff_vs_nearest_version"] and "bcrypt" in h["diff_vs_nearest_version"] for h in cp)
 
 
+def test_extract_assignment_style():
+    src = """var res = module.exports = { __proto__: http.ServerResponse.prototype };
+res.send = function send(body) { return this.end(body); };
+exports.etag = createETagGenerator({ weak: false });
+exports.compile = (x) => x + 1;
+module.exports = function createApplication() { return app; };
+var handlers = { handle: function (req) { return req; } };
+"""
+    names = [s.symbol for s in extract_js("lib/response.js", src)]
+    assert names == ["res.send", "exports.compile", "module.exports", "handle"]
+
+
 def test_extract_symbols():
     names = [s.symbol for s in extract_js("u.js", UTIL)]
     assert names == ["normalize", "Cache.get", "Cache.set"]
