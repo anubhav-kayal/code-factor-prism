@@ -56,4 +56,38 @@ dev metrics reproduce MTEB's numbers from the same ranked lists.
 
 ## Results
 
-Only measured numbers appear here. See `reports/` and `results/`.
+Only measured numbers appear here. See `submissions/`, `reports/` and `results/`.
+
+### Official AppsRetrieval test split (via `mteb.evaluate`, CPU)
+
+| Submission | NDCG@10 | MRR@10 | Recall@100 | Wall time | Peak RSS |
+|---|---|---|---|---|---|
+| e5-base-v2 encoder (`submissions/e5-base-v2`) | 0.1152 | 0.0988 | 0.3434 | 20.6 min (4 threads, Apple M3) | 1.9 GB |
+
+### Dev findings (train queries; no test labels used)
+
+* **Train ≠ test.** 97% of test queries are contest-style (an `Input` section,
+  stdin/stdout) with no starter code; only 26% of train queries are. BM25 on all
+  train queries scores NDCG@10 0.349 but only 0.101 on the contest-style subset.
+  Dev decisions therefore use the **test-like subset** (1,311 train queries,
+  `query_filter: "stdio"`), selected from query text only.
+* On that subset, fusing BM25 over the raw query and a deterministic "core" view
+  (examples/notes stripped) gives NDCG@10 0.101 → 0.108, Recall@100 0.275 → 0.296.
+* `jina-code-embeddings-0.5b` was not run in full: on this 8 GB CPU machine it
+  had used >17 CPU-minutes on a 250-text smoke subset without finishing.
+
+## Version track (P1 / Bonus)
+
+`src/prism/versioning/` indexes JavaScript repositories per commit:
+function/method snippets (tree-sitter) → content key `sha256(code)` →
+occurrence (path, symbol, span) → snapshot membership. `index_commit` re-parses
+only files changed since the parent snapshot and embeds only unseen content.
+`tests/test_versioning.py` checks incremental == full rebuild (contents and
+search results) over add/modify/rename/delete commits, snapshot isolation, and
+that history search returns both versions of a changed function with the
+distinguishing diff. This track is evaluated separately from AppsRetrieval.
+
+```bash
+.venv/bin/python scripts/index_repo.py data/repos/express --include lib/ --last 30 --verify
+.venv/bin/python scripts/demo.py repo express --history "check whether the request is fresh"
+```
