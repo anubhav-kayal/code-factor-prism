@@ -1,0 +1,10 @@
+mteb==2.21.10
+sentence-transformers==6.1.0
+torch==2.14.0
+transformers==5.17.0
+datasets==5.0.1
+bm25s==0.3.11
+pytrec_eval-terrier==0.5.10
+numpy==2.5.3
+psutil==7.2.2
+PyYAML==6.0.3
