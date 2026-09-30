@@ -1,0 +1,22 @@
+{
+  "repo": "express",
+  "include": [
+    "lib/"
+  ],
+  "model": "intfloat/e5-base-v2",
+  "commits": 100,
+  "snippets_at_head": 64,
+  "cold_full_rebuild_head_s": 2.92,
+  "incremental_total_s": {
+    "mean": 0.05,
+    "max": 0.234
+  },
+  "incremental_new_embeddings_mean": 0.11,
+  "distinct_contents_embedded": 75,
+  "total_occurrence_versions": 6400,
+  "verify": {
+    "commits_checked": 100,
+    "queries": 5,
+    "mismatches": []
+  }
+}
