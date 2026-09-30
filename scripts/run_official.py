@@ -2,7 +2,6 @@
 
     python scripts/run_official.py --model jina-code-0.5b
     python scripts/run_official.py --model e5-base-v2 --smoke   # tiny subset sanity run
-    python scripts/run_official.py --config configs/dev/e5_bm25_rrf.json   # hybrid via SearchProtocol
 """
 
 from __future__ import annotations
@@ -23,7 +22,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import mteb  # noqa: E402
 
 from prism.mteb_encoder import PipelineConfig, PrePostPipelineEncoder  # noqa: E402
-from prism.mteb_search import PrismHybridSearch  # noqa: E402
 
 
 def peak_rss_mb() -> float:
@@ -41,7 +39,6 @@ def _json_default(o):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="jina-code-0.5b")
-    ap.add_argument("--config", default=None, help="dev config JSON -> run as MTEB SearchProtocol")
     ap.add_argument("--max-seq-length", type=int, default=None)
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--device", default="cpu", help="cpu (submission) | mps | cuda (experiments only)")
@@ -50,9 +47,8 @@ def main() -> None:
     ap.add_argument("--smoke", action="store_true", help="evaluate on a small subsample")
     args = ap.parse_args()
 
-    cfg = json.loads(Path(args.config).read_text()) if args.config else None
-    run_name = cfg["run_id"].removeprefix("dev-") if cfg else args.model
-    if not cfg and args.max_seq_length:
+    run_name = args.model
+    if args.max_seq_length:
         run_name += f"-len{args.max_seq_length}"
     out = Path(args.out) / (run_name + ("-smoke" if args.smoke else ""))
     out.mkdir(parents=True, exist_ok=True)
@@ -60,13 +56,10 @@ def main() -> None:
     t0 = time.perf_counter()
     if args.threads:
         torch.set_num_threads(args.threads)
-    if cfg:
-        model = PrismHybridSearch(cfg, name=f"prism/{run_name}")
-    else:
-        model = PrePostPipelineEncoder(
-            PipelineConfig(model_key=args.model, max_seq_length=args.max_seq_length,
-                           num_threads=args.threads, device=args.device)
-        )
+    model = PrePostPipelineEncoder(
+        PipelineConfig(model_key=args.model, max_seq_length=args.max_seq_length,
+                       num_threads=args.threads, device=args.device)
+    )
     load_s = time.perf_counter() - t0
 
     task = mteb.get_task("AppsRetrieval")
@@ -103,11 +96,11 @@ def main() -> None:
 
     scores = task_result.to_dict()["scores"]["test"][0]
     profile = {
-        "model": cfg if cfg else model.spec.name,
-        "model_revision": None if cfg else model.spec.revision,
-        "max_seq_length": None if cfg else model.model.max_seq_length,
+        "model": model.spec.name,
+        "model_revision": model.spec.revision,
+        "max_seq_length": model.model.max_seq_length,
         "smoke": args.smoke,
-        "device": "cpu" if cfg else args.device,
+        "device": args.device,
         "torch_threads": torch.get_num_threads(),
         "machine": f"{platform.machine()} {platform.processor()} {platform.platform()}",
         "model_load_s": round(load_s, 2),

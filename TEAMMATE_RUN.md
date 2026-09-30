@@ -8,7 +8,7 @@ Current official test scores to beat (NDCG@10 / MRR@10):
 | Run | NDCG@10 | MRR@10 |
 |---|---|---|
 | e5-base-v2 (released) | 0.1152 | 0.0988 |
-| e5-base-v2 + BM25 hybrid (branch `hybrid-submission`) | 0.1212 | 0.1025 |
+| e5-base-v2 + BM25 hybrid (kept on branch `hybrid-submission`, not on `main`) | 0.1212 | 0.1025 |
 
 Rules for every run: **CPU only** (`--device cpu`, the default), do not edit
 code or configs mid-run, and don't touch the test split outside
@@ -70,7 +70,7 @@ N you used in your reply.
 Output: `results/jina-code-0.5b/`. This tests whether the longer context helps
 with long problem statements. It costs about 2× the time of step 2.
 
-## 4. Optional: dev runs, for tuning the hybrid (no test labels)
+## 4. Optional: dev runs, jina alone vs jina + BM25 (no test labels)
 
 These evaluate on the 1,311 contest-style **train** queries. That's how we
 decide whether jina + BM25 fusion helps, without looking at the test split.
