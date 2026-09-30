@@ -1,0 +1,36 @@
+{
+  "model": {
+    "run_id": "e5-bm25-rrf",
+    "split": "train",
+    "retrievers": [
+      {
+        "type": "dense",
+        "model": "e5-base-v2"
+      },
+      {
+        "type": "bm25"
+      }
+    ],
+    "fusion": {
+      "method": "rrf",
+      "k": 60
+    },
+    "depth": 200
+  },
+  "model_revision": null,
+  "max_seq_length": null,
+  "smoke": false,
+  "device": "cpu",
+  "torch_threads": 4,
+  "machine": "arm64 arm macOS-26.6.2-arm64-arm-64bit",
+  "model_load_s": 0.01,
+  "evaluate_wall_s": 484.95,
+  "peak_rss_mb": 1787.3,
+  "versions": {
+    "mteb": "2.21.10",
+    "torch": "2.14.0"
+  },
+  "ndcg_at_10": 0.12122,
+  "mrr_at_10": 0.10249288560045533,
+  "recall_at_100": 0.34954
+}
