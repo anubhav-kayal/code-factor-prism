@@ -1,0 +1,19 @@
+{
+  "model": "intfloat/e5-base-v2",
+  "model_revision": "f52bf8ec8c7124536f0efb74aca902b2995e5bcd",
+  "max_seq_length": 512,
+  "smoke": false,
+  "device": "cpu",
+  "torch_threads": 4,
+  "machine": "arm64 arm macOS-26.6.2-arm64-arm-64bit",
+  "model_load_s": 3.12,
+  "evaluate_wall_s": 1237.24,
+  "peak_rss_mb": 1874.4,
+  "versions": {
+    "mteb": "2.21.10",
+    "torch": "2.14.0"
+  },
+  "ndcg_at_10": 0.11523,
+  "mrr_at_10": 0.0987764286768271,
+  "recall_at_100": 0.34343
+}
