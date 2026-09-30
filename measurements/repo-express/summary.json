@@ -4,18 +4,18 @@
     "lib/"
   ],
   "model": "intfloat/e5-base-v2",
-  "commits": 100,
-  "snippets_at_head": 64,
-  "cold_full_rebuild_head_s": 2.92,
+  "commits": 130,
+  "snippets_at_head": 76,
+  "cold_full_rebuild_head_s": 6.31,
   "incremental_total_s": {
-    "mean": 0.05,
-    "max": 0.234
+    "mean": 0.072,
+    "max": 0.412
   },
-  "incremental_new_embeddings_mean": 0.11,
-  "distinct_contents_embedded": 75,
-  "total_occurrence_versions": 6400,
+  "incremental_new_embeddings_mean": 0.13,
+  "distinct_contents_embedded": 93,
+  "total_occurrence_versions": 9880,
   "verify": {
-    "commits_checked": 100,
+    "commits_checked": 130,
     "queries": 5,
     "mismatches": []
   }
