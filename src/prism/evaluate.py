@@ -5,6 +5,7 @@ Config (dict):
     split:       "train" (dev, default) or "test" (final frozen run only)
     folds:       optional list of fold indices to restrict dev queries
     retrievers:  [{"type": "bm25", ...}, {"type": "dense", "model": "e5-base-v2", ...}]
+                 each may set "query_view" (see query_views.VIEWS, default "raw")
     fusion:      null | {"method": "rrf", "k": 60, "weights": [...]} | {"method": "zscore", ...}
     depth:       candidates per retriever (default 200)
     latency_probe: number of single queries to time end-to-end (default 50)
@@ -21,6 +22,7 @@ from pathlib import Path
 import numpy as np
 
 from . import data, fusion, metrics
+from .query_views import VIEWS
 from .retrievers import BM25Retriever, Candidate, DenseRetriever
 
 REPORTS = Path(__file__).resolve().parents[2] / "reports"
@@ -28,10 +30,22 @@ REPORTS = Path(__file__).resolve().parents[2] / "reports"
 
 def build_retriever(spec: dict):
     if spec["type"] == "bm25":
-        return BM25Retriever(k1=spec.get("k1", 1.2), b=spec.get("b", 0.75))
-    if spec["type"] == "dense":
-        return DenseRetriever(spec["model"], spec.get("max_seq_length"), spec.get("batch_size", 32))
-    raise ValueError(spec["type"])
+        r = BM25Retriever(k1=spec.get("k1", 1.2), b=spec.get("b", 0.75))
+    elif spec["type"] == "dense":
+        r = DenseRetriever(spec["model"], spec.get("max_seq_length"), spec.get("batch_size", 32))
+    else:
+        raise ValueError(spec["type"])
+    r.view = spec.get("query_view", "raw")
+    if r.view != "raw":
+        r.name = f"{r.name}:{r.view}"
+    return r
+
+
+def _search(r, texts: list[str], k: int) -> list[list[Candidate]]:
+    view_texts = [VIEWS[r.view](t) for t in texts]
+    if isinstance(r, DenseRetriever):
+        return r.search(view_texts, k, view=r.view)
+    return r.search(view_texts, k)
 
 
 def _peak_rss_mb() -> float:
@@ -68,7 +82,7 @@ def evaluate(config: dict) -> dict:
         r.index(split.doc_ids, split.doc_texts)
         profile["index_s"][r.name] = round(time.perf_counter() - t, 2)
         t = time.perf_counter()
-        per_source.append(r.search(qtexts, depth))
+        per_source.append(_search(r, qtexts, depth))
         profile["search_s"][r.name] = round(time.perf_counter() - t, 2)
 
     run = {q: _fuse([src[i] for src in per_source], config.get("fusion")) for i, q in enumerate(qids)}
@@ -157,12 +171,13 @@ def _latency_probe(retrievers, qtexts, config) -> dict:
         t = time.perf_counter()
         lists = []
         for r in retrievers:
+            qv = VIEWS[r.view](q)
             if isinstance(r, DenseRetriever):
-                v = r.model.encode([q], prompt=r.spec.query_prompt, normalize_embeddings=True,
+                v = r.model.encode([qv], prompt=r.spec.query_prompt, normalize_embeddings=True,
                                    convert_to_numpy=True, show_progress_bar=False)
                 lists.append(r.search_vecs(v, config.get("depth", 200))[0])
             else:
-                lists.append(r.search([q], config.get("depth", 200))[0])
+                lists.append(r.search([qv], config.get("depth", 200))[0])
         _fuse(lists, config.get("fusion"))
         if i > 0:  # first query is warm-up
             times.append((time.perf_counter() - t) * 1000)
