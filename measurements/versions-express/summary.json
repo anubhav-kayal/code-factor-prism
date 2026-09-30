@@ -1,0 +1,17 @@
+{
+  "labels": 16,
+  "model": "intfloat/e5-base-v2",
+  "history": {
+    "mrr": 0.8646,
+    "hit@1": 12,
+    "hit@5": 16,
+    "version_correct": 13,
+    "p50_ms": 95.35
+  },
+  "snapshot": {
+    "mrr": 0.9688,
+    "hit@1": 15,
+    "hit@5": 16,
+    "p50_ms": 30.35
+  }
+}

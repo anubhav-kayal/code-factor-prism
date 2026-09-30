@@ -87,7 +87,25 @@ search results) over add/modify/rename/delete commits, snapshot isolation, and
 that history search returns both versions of a changed function with the
 distinguishing diff. This track is evaluated separately from AppsRetrieval.
 
+Measured on express `lib/` (130 first-parent commits, 76 functions at HEAD,
+e5-base-v2, CPU): incremental update mean 0.07 s vs 6.3 s cold full rebuild;
+incremental == full rebuild at all 130 commits (contents and top-10 results for
+5 probe queries). See `measurements/repo-express/`.
+
+Version-aware retrieval on 16 author-labelled queries (`eval/express_version_queries.json`;
+each describes one specific version of a function, written from that commit's diff):
+
+| Mode | MRR | Hit@1 | Hit@5 | Gold version above other versions |
+|---|---|---|---|---|
+| History (all commits) | 0.865 | 12/16 | 16/16 | 13/16 |
+| Snapshot (labelled commit) | 0.969 | 15/16 | 16/16 | — |
+
+Caveat: the set is small and written by us, and many queries contain the
+distinguishing token (e.g. `trimEnd`), so it checks the mechanism rather than
+generalisation. Failures are the 4-version `res.send` and a one-line `app.render` change.
+
 ```bash
-.venv/bin/python scripts/index_repo.py data/repos/express --include lib/ --last 30 --verify
+.venv/bin/python scripts/index_repo.py data/repos/express --include lib/ --last 130 --verify
+.venv/bin/python scripts/eval_versions.py eval/express_version_queries.json
 .venv/bin/python scripts/demo.py repo express --history "check whether the request is fresh"
 ```

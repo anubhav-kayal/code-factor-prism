@@ -1,0 +1,178 @@
+[
+  {
+    "id": "res-send-a",
+    "symbol": "res.send",
+    "commit": "3dc96995df",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 4,
+    "snapshot_rank": 1,
+    "history_ms": 311.1,
+    "snapshot_ms": 28.5
+  },
+  {
+    "id": "res-send-b",
+    "symbol": "res.send",
+    "commit": "a479419b16",
+    "history_rank": 3,
+    "version_correct": false,
+    "n_versions_of_symbol": 4,
+    "snapshot_rank": 1,
+    "history_ms": 86.6,
+    "snapshot_ms": 32.6
+  },
+  {
+    "id": "res-send-c",
+    "symbol": "res.send",
+    "commit": "18e5985b8a",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 4,
+    "snapshot_rank": 1,
+    "history_ms": 78.6,
+    "snapshot_ms": 30.4
+  },
+  {
+    "id": "res-send-d",
+    "symbol": "res.send",
+    "commit": "9a34acf03c",
+    "history_rank": 2,
+    "version_correct": false,
+    "n_versions_of_symbol": 4,
+    "snapshot_rank": 1,
+    "history_ms": 92.8,
+    "snapshot_ms": 29.2
+  },
+  {
+    "id": "req-protocol-old",
+    "symbol": "req.protocol",
+    "commit": "3dc96995df",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 113.5,
+    "snapshot_ms": 28.1
+  },
+  {
+    "id": "req-protocol-new",
+    "symbol": "req.protocol",
+    "commit": "89f198c6a5",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 98.4,
+    "snapshot_ms": 34.3
+  },
+  {
+    "id": "app-listen-old",
+    "symbol": "app.listen",
+    "commit": "3dc96995df",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 95.3,
+    "snapshot_ms": 28.7
+  },
+  {
+    "id": "app-listen-new",
+    "symbol": "app.listen",
+    "commit": "54af593b73",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 96.4,
+    "snapshot_ms": 32.8
+  },
+  {
+    "id": "req-fresh-old",
+    "symbol": "req.fresh",
+    "commit": "3dc96995df",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 102.3,
+    "snapshot_ms": 29.8
+  },
+  {
+    "id": "req-fresh-new",
+    "symbol": "req.fresh",
+    "commit": "ae6dd37680",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 101.5,
+    "snapshot_ms": 32.6
+  },
+  {
+    "id": "req-host-old",
+    "symbol": "req.host",
+    "commit": "3dc96995df",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 3,
+    "snapshot_rank": 1,
+    "history_ms": 95.4,
+    "snapshot_ms": 29.2
+  },
+  {
+    "id": "req-host-new",
+    "symbol": "req.host",
+    "commit": "9d8223d92e",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 3,
+    "snapshot_rank": 1,
+    "history_ms": 98.3,
+    "snapshot_ms": 33.0
+  },
+  {
+    "id": "qs-patched",
+    "symbol": "parseExtendedQueryString",
+    "commit": "2f64f68c37",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 92.8,
+    "snapshot_ms": 33.1
+  },
+  {
+    "id": "qs-default",
+    "symbol": "parseExtendedQueryString",
+    "commit": "3dc96995df",
+    "history_rank": 1,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 85.8,
+    "snapshot_ms": 29.3
+  },
+  {
+    "id": "render-old",
+    "symbol": "app.render",
+    "commit": "3dc96995df",
+    "history_rank": 2,
+    "version_correct": true,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 2,
+    "history_ms": 86.3,
+    "snapshot_ms": 30.3
+  },
+  {
+    "id": "render-new",
+    "symbol": "app.render",
+    "commit": "c9ecf7b658",
+    "history_rank": 2,
+    "version_correct": false,
+    "n_versions_of_symbol": 2,
+    "snapshot_rank": 1,
+    "history_ms": 85.4,
+    "snapshot_ms": 34.6
+  }
+]
