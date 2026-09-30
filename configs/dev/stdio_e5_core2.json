@@ -1,0 +1,14 @@
+{
+ "run_id": "dev-stdio-e5-core2",
+ "split": "train",
+ "query_filter": "stdio",
+ "depth": 200,
+ "retrievers": [
+  {
+   "type": "dense",
+   "model": "e5-base-v2",
+   "query_view": "core2"
+  }
+ ],
+ "fusion": null
+}

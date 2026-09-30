@@ -1,0 +1,19 @@
+{
+ "run_id": "dev-stdio-bm25-raw-core2-rrf",
+ "split": "train",
+ "query_filter": "stdio",
+ "depth": 200,
+ "retrievers": [
+  {
+   "type": "bm25"
+  },
+  {
+   "type": "bm25",
+   "query_view": "core2"
+  }
+ ],
+ "fusion": {
+  "method": "rrf",
+  "k": 60
+ }
+}
